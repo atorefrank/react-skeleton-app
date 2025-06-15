@@ -194,12 +194,12 @@ jobs:
       - name: Push a package to Octopus Deploy 🐙
         uses: OctopusDeploy/push-package-action@v3
         with:
-          packages: package/user-portal.${{ steps.package.outputs.version }}.zip
+          packages: package/user-portal.${{ steps.get_tag.outputs.tag }}.zip
 
       - name: Push build information to Octopus Deploy 🐙
         uses: OctopusDeploy/push-build-information-action@v3
         with:
-          version: ${{ steps.package.outputs.version }}
+          version: ${{ steps.get_tag.outputs.tag }}
           packages: user-portal
         # run: |
         #   npm install -g @octopusdeploy/cli
