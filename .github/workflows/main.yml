@@ -170,7 +170,6 @@ jobs:
         with:
             package_id: 'user-portal'
             version: ${{ steps.get_tag.outputs.tag }}
-            output_folder: packaged
             base_path: octopus-package
             files: |
                 **/*.*
