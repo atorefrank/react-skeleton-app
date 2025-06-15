@@ -186,7 +186,7 @@ jobs:
           name: ${{ steps.package.outputs.package_filename }}
           path: ${{ steps.package.outputs.package_file_path }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: user-portal.${{ steps.get_tag.outputs.tag }}
           path: package
