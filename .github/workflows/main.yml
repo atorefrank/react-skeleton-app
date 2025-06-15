@@ -176,7 +176,7 @@ jobs:
             files: |
                 **/*.*
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.package.outputs.package_filename }}
           path: ${{ steps.package.outputs.package_file_path }}
