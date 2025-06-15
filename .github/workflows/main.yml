@@ -124,7 +124,7 @@ jobs:
     env:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
-        OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE }}
+        OCTOPUS_SPACE: "react-skeleton"
 
     steps:
       - name: Checkout code
