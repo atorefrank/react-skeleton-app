@@ -121,6 +121,11 @@ jobs:
     needs: build-and-release
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
+    env:
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+        OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+        OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -180,12 +185,22 @@ jobs:
         with:
           name: ${{ steps.package.outputs.package_filename }}
           path: ${{ steps.package.outputs.package_file_path }}
-      
-      - name: Push to Octopus Deploy
-        env:
-          OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
-          OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
-          OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE }}
-        run: |
-          npm install -g @octopusdeploy/cli
-          octopus package upload --package="${{ steps.package.outputs.package_file_path }}" --server="$OCTOPUS_URL" --apiKey="$OCTOPUS_API_KEY"
+
+    #   - uses: actions/download-artifact@v3
+    #     with:
+    #       name: user-portal.${{ steps.package.outputs.version }}
+    #       path: package
+
+      - name: Push a package to Octopus Deploy 🐙
+        uses: OctopusDeploy/push-package-action@v3
+        with:
+          packages: package/user-portal.${{ steps.package.outputs.version }}.zip
+
+      - name: Push build information to Octopus Deploy 🐙
+        uses: OctopusDeploy/push-build-information-action@v3
+        with:
+          version: ${{ steps.package.outputs.version }}
+          packages: user-portal
+        # run: |
+        #   npm install -g @octopusdeploy/cli
+        #   octopus package upload --package="${{ steps.package.outputs.package_file_path }}" --server="$OCTOPUS_URL" --apiKey="$OCTOPUS_API_KEY"
