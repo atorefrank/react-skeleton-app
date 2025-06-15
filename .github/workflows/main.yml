@@ -147,9 +147,6 @@ jobs:
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "Latest tag: $TAG"
       
-      - name: Install OctoPack
-        run: npm install -g octopackjs
-      
       - name: Create package info
         run: |
           cat > package-info.json << EOF
@@ -161,19 +158,28 @@ jobs:
             "Description": "React-based user portal application"
           }
           EOF
-      
-      - name: Package with OctoPack
+
+      - name: Create package
         run: |
           mkdir -p octopus-package
           cp -r dist/* octopus-package/ 2>/dev/null || cp -r build/* octopus-package/ 2>/dev/null || echo "No dist or build folder found"
           cp package.json octopus-package/
-          octo pack --id="user-portal" --version="${{ steps.get_tag.outputs.tag }}" --basePath="octopus-package" --verbose
-      
+
+      - name: Create a Zip package 🐙
+        uses: OctopusDeploy/create-zip-package-action@v3
+        with:
+            package_id: 'user-portal'
+            version: ${{ steps.get_tag.outputs.tag }}
+            output_folder: packaged
+            base_path: octopus-package
+            files: |
+                **/*.*
+
       - name: Upload package artifact
         uses: actions/upload-artifact@v4
         with:
           name: octopus-package
-          path: "*.nupkg"
+          path: "*.zip"
       
       - name: Push to Octopus Deploy
         if: env.OCTOPUS_URL != '' && env.OCTOPUS_API_KEY != ''
@@ -182,5 +188,5 @@ jobs:
           OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
         run: |
           npm install -g @octopusdeploy/cli
-          PACKAGE_FILE=$(ls *.nupkg | head -1)
+          PACKAGE_FILE=$(ls *.zip | head -1)
           octopus package upload --package="$PACKAGE_FILE" --server="$OCTOPUS_URL" --apiKey="$OCTOPUS_API_KEY"
