@@ -186,15 +186,12 @@ jobs:
           name: ${{ steps.package.outputs.package_filename }}
           path: ${{ steps.package.outputs.package_file_path }}
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: user-portal.${{ steps.get_tag.outputs.tag }}
-          path: package
-
       - name: Push a package to Octopus Deploy 🐙
         uses: OctopusDeploy/push-package-action@v3
         with:
-          packages: package/user-portal.${{ steps.get_tag.outputs.tag }}.zip
+          packages: ${{ steps.package.outputs.package_file_path }}
+
+
 
       - name: Push build information to Octopus Deploy 🐙
         uses: OctopusDeploy/push-build-information-action@v3
