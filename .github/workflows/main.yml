@@ -166,26 +166,26 @@ jobs:
           cp package.json octopus-package/
 
       - name: Create a Zip package 🐙
+        id: package
         uses: OctopusDeploy/create-zip-package-action@v3
         with:
             package_id: 'user-portal'
             version: ${{ steps.get_tag.outputs.tag }}
+            output_folder: packaged
             base_path: octopus-package
             files: |
                 **/*.*
 
-      - name: Upload package artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
-          name: octopus-package
-          path: "*.zip"
+          name: ${{ steps.package.outputs.package_filename }}
+          path: ${{ steps.package.outputs.package_file_path }}
       
       - name: Push to Octopus Deploy
-        if: env.OCTOPUS_URL != '' && env.OCTOPUS_API_KEY != ''
         env:
           OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
           OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+          OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE }}
         run: |
           npm install -g @octopusdeploy/cli
-          PACKAGE_FILE=$(ls *.zip | head -1)
-          octopus package upload --package="$PACKAGE_FILE" --server="$OCTOPUS_URL" --apiKey="$OCTOPUS_API_KEY"
+          octopus package upload --package="${{ steps.package.outputs.package_file_path }}" --server="$OCTOPUS_URL" --apiKey="$OCTOPUS_API_KEY"
