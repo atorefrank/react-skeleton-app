@@ -199,6 +199,7 @@ jobs:
           version: ${{ steps.get_tag.outputs.tag }}
           packages: user-portal
           overwrite_mode: OverwriteExisting
+          replace_existing: true
         # run: |
         #   npm install -g @octopusdeploy/cli
         #   octopus package upload --package="${{ steps.package.outputs.package_file_path }}" --server="$OCTOPUS_URL" --apiKey="$OCTOPUS_API_KEY"
