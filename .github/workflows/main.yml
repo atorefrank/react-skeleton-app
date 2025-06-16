@@ -198,6 +198,7 @@ jobs:
         with:
           version: ${{ steps.get_tag.outputs.tag }}
           packages: user-portal
+          overwrite_mode: OverwriteExisting
         # run: |
         #   npm install -g @octopusdeploy/cli
         #   octopus package upload --package="${{ steps.package.outputs.package_file_path }}" --server="$OCTOPUS_URL" --apiKey="$OCTOPUS_API_KEY"
@@ -207,6 +208,7 @@ jobs:
         id: "create_release"
         with:
           project: "user-portal"
+          ignore_existing: true
           package_version: ${{ steps.get_tag.outputs.tag }}
 
       - name: Deploy the release in Octopus Deploy 🐙
