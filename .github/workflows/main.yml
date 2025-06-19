@@ -199,7 +199,7 @@ jobs:
           version: ${{ steps.get_tag.outputs.tag }}
           packages: user-portal
           overwrite_mode: OverwriteExisting
-          replace_existing: true
+
         # run: |
         #   npm install -g @octopusdeploy/cli
         #   octopus package upload --package="${{ steps.package.outputs.package_file_path }}" --server="$OCTOPUS_URL" --apiKey="$OCTOPUS_API_KEY"
@@ -218,16 +218,15 @@ jobs:
         with:
           project: "user-portal"
           release_number: ${{ steps.create_release.outputs.release_number }}
-          environments: |
-            Development
-            Test
+          environments: 
+            Dev
     
       - name: Waiting for 1st deployment in Octopus Deploy 🐙
         uses: OctopusDeploy/await-task-action@v3
         with:
             server_task_id: ${{ fromJson(steps.queue_deployments.outputs.server_tasks)[0].serverTaskId }}
 
-      - name: Waiting for 2nd deployment in Octopus Deploy 🐙
-        uses: OctopusDeploy/await-task-action@v3
-        with:
-            server_task_id: ${{ fromJson(steps.queue_deployments.outputs.server_tasks)[1].serverTaskId }}
+      # - name: Waiting for 2nd deployment in Octopus Deploy 🐙
+      #   uses: OctopusDeploy/await-task-action@v3
+      #   with:
+      #       server_task_id: ${{ fromJson(steps.queue_deployments.outputs.server_tasks)[1].serverTaskId }}
