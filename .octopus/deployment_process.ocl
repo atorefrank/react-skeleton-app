@@ -1,7 +1,7 @@
 step "deploy-an-azure-app-service" {
     name = "Deploy an Azure App Service"
     properties = {
-        Octopus.Action.TargetRoles = "user-portal-dev"
+        Octopus.Action.TargetRoles = "octopus-role,octopus-environment"
     }
 
     action {
